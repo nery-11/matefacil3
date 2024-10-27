@@ -11,11 +11,11 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Servir archivos estáticos desde la carpeta 'src/app/public'
-app.use(express.static(path.join(__dirname,'public')));
+// Servir archivos estáticos desde la carpeta 'public'
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Conectar a MongoDB Atlas (sin las opciones deprecadas)
-mongoose.connect('mongodb+srv://ncontrerast2:12345@metafacil.20wqq.mongodb.net/?retryWrites=true&w=majority&appName=metafacil')
+mongoose.connect(process.env.MONGO_URI || 'mongodb+srv://ncontrerast2:12345@metafacil.20wqq.mongodb.net/?retryWrites=true&w=majority&appName=metafacil')
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log('Error en la conexión a MongoDB: ', err));
 
@@ -68,10 +68,11 @@ app.post('/api/login', async (req, res) => {
 
 // Ruta para servir el archivo 'index.html'
 app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname,'public', 'index.html'));
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-// Iniciar el servidor en el puerto 5000
-app.listen(5000, () => {
-  console.log('Servidor corriendo en el puerto 5000');
+// Iniciar el servidor en el puerto proporcionado por Render o en el puerto 5000 para desarrollo local
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
 });
